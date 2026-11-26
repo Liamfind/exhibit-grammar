@@ -24,20 +24,21 @@
 
 ## 维护
 
-1. 改 `exhibit-grammar/` 里的文件。改了版本号的，同步改 `SKILL.md` 第 0 节和下面的更新记录。
-2. 跑测试，要显示「0 项不对」：
+1. 改 `exhibit-grammar/` 里的文件，同时改 `SKILL.md` 第 0 节的版本号和下面的更新记录。
+2. 发布：
 
    ```bash
-   python3 tests/test_check_svg.py exhibit-grammar/scripts/check_svg.py
+   tools/release.sh v1.6 "这一版改了什么"
    ```
 
-3. 打包：
+   脚本按顺序做以下几步，任何一步没过就停，不推送：
+   - 去敏检查：用本机的敏感词清单（`~/.config/exhibit-grammar/blocklist.txt`，不进仓库），并查已停用的颜色。
+   - 跑测试。
+   - 查改动大小：删改超过 15 行就停。
+   - 提交推送，再打包出 `exhibit-grammar.skill`。
 
-   ```bash
-   zip -r exhibit-grammar.skill exhibit-grammar -x '*.DS_Store' '*__pycache__*'
-   ```
-
-4. 提交推送后，把 `.skill` 传到 claude.ai。用 Skill Pilot 装的电脑上，执行一次更新。
+   设了 `SKILL_PILOT_DIR` 时，还会用 Skill Pilot 更新本机副本，并重新上架团队商店。只想检查不发布，在命令末尾加 `--dry-run`。
+3. 把打包好的 `.skill` 传到 claude.ai。
 
 ## 更新记录
 
