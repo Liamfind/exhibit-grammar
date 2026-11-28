@@ -49,9 +49,12 @@ zip -qr exhibit-grammar.skill exhibit-grammar -x '*.DS_Store' '*__pycache__*'
 echo "已打包 $(pwd)/exhibit-grammar.skill"
 
 # 7. Skill Pilot：更新本机副本，重新上架团队商店（推荐语每次都要带上，不带会被清空）
+#    到这里已经推送和打包，这一步没完成只算部分完成：退出码 3，补跑这一步即可。
 if [ -n "${SKILL_PILOT_DIR:-}" ]; then
   cd "$SKILL_PILOT_DIR"
   export PYTHONDONTWRITEBYTECODE=1
-  python3 -m skill_pilot update exhibit-grammar --yes
-  python3 -m skill_pilot team publish exhibit-grammar --yes --note "exhibit-grammar=图表规范：做 deck、报告、网页里的图表前先装。告诉 agent 选什么图、怎么配色、字号多大，网页图表第一稿就带悬停数据，交付前有自检脚本。"
+  left=""
+  python3 -m skill_pilot update exhibit-grammar --yes || left="本机副本"
+  python3 -m skill_pilot team publish exhibit-grammar --yes --note "exhibit-grammar=图表规范：做 deck、报告、网页里的图表前先装。告诉 agent 选什么图、怎么配色、字号多大，网页图表第一稿就带悬停数据，交付前有自检脚本。" || left="$left 团队商店"
+  [ -z "$left" ] || { echo "部分完成：已推送和打包，没完成的是：$left" >&2; exit 3; }
 fi
